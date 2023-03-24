@@ -12,6 +12,7 @@ public class Logic : MonoBehaviour
     public TMP_InputField addNodeField;
     public TMP_InputField deleteNodeField;
     private List<Circle> circlesUI = new List<Circle>();
+    private List<LineRenderer> lines = new List<LineRenderer>();
     [SerializeField] private Circle CirclePrefab;
     Tree<int> avltree = new Tree<int>();
     // Start is called before the first frame update
@@ -28,37 +29,17 @@ public class Logic : MonoBehaviour
         avltree.addNode(70);
         avltree.addNode(80);
         avltree.addNode(80);
-        //Debug.Log(avltree.heightOfTree());
-        //Debug.Log(avltree.rootNode.Key);
-        //Debug.Log(avltree.rootNode.Left.Key);
-        //Debug.Log(avltree.rootNode.Right.Key);
-        //GameObject gameObject = Instantiate(circle, new Vector3(1, 1), transform.rotation);
-        //var cir = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
-        //cir.ValueText.text = 30.ToString();
-        //cir.transform.position = cir.transform.position + Vector3.up * (float) 1;
-        //cir.transform.position = cir.transform.position + Vector3.up * (float) 1;
-        //cir.transform.position = cir.transform.position + Vector3.up * (float) 1;
-        //cir.transform.position = cir.transform.position + Vector3.up * (float) 1;
-        //var cir2 = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
-        //cir2.ValueText.text = 30.ToString();
-        //cir2.transform.position = cir2.transform.position + Vector3.up * (float)1;
-        //cir2.transform.position = cir2.transform.position + Vector3.up * (float)1;
-        //cir2.transform.position = cir2.transform.position + Vector3.up * (float)1;
-        //cir2.transform.position = cir2.transform.position + Vector3.right * (float)1;
-        //cir.updatePosition(); 
-        //cir.updatePosition();
-        //cir.updatePosition();
-        //cir.updatePosition();
-        geneRateUITree(avltree.rootNode, false, new Vector3());
+        geneRateUITree(avltree.rootNode, false, new Circle());
 
     }
 
-    void geneRateUITree(Node<int> node, bool right, Vector3 v3)
+    void geneRateUITree(Node<int> node, bool right, Circle circle)
     {
         Vector3 pos = new Vector3();
+        Circle cir = null;
         if(node == avltree.rootNode)
         {
-            var cir = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
+            cir = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
             circlesUI.Add(cir);
             cir.ValueText.text = avltree.rootNode.Key.ToString();
             cir.transform.position = cir.transform.position + Vector3.up * (float) avltree.heightOfTree();
@@ -74,20 +55,29 @@ public class Logic : MonoBehaviour
                 }
 
                 
-                var cir = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
+                cir = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
                 circlesUI.Add(cir);
                 cir.ValueText.text = node.Key.ToString();
-                cir.transform.position = cir.transform.position + Vector3.up  * (float) (v3.y - 1);
-                if((v3.y - 1) == avltree.heightOfTree() - 1)
+                cir.transform.position = cir.transform.position + Vector3.up  * (float) (circle.transform.position.y - 1);
+                if((circle.transform.position.y - 1) == avltree.heightOfTree() - 1)
                 {
-                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(v3.x - 8));
+                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(circle.transform.position.x - 8));
                 }
                 else
                 {
-                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(v3.x - 2));
+                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(circle.transform.position.x - 2));
                 }
                 
                 pos = cir.transform.position;
+                GameObject lineObject = new GameObject("Line");
+                LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+                lineRenderer.positionCount = 2;
+                lineRenderer.startWidth = 0.05f;
+                lineRenderer.endWidth = 0.05f;
+                lineRenderer.material.color = Color.black;
+                lineRenderer.SetPosition(0, cir.transform.position);
+                lineRenderer.SetPosition(1, circle.transform.position);
+                lines.Add(lineRenderer);
             }
 
             if(right == true)
@@ -96,32 +86,40 @@ public class Logic : MonoBehaviour
                 {
                     //Debug.Log(avltree.getHeight(node));
                 }
-                var cir = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
+                cir = Instantiate(CirclePrefab, Vector2.zero, Quaternion.identity);
                 circlesUI.Add(cir);
                 cir.ValueText.text = node.Key.ToString();
-                cir.transform.position = cir.transform.position + Vector3.up * (float) (v3.y - 1);
-                if ((v3.y - 1) == avltree.heightOfTree() - 1)
+                cir.transform.position = cir.transform.position + Vector3.up * (float) (circle.transform.position.y - 1);
+                if ((circle.transform.position.y - 1) == avltree.heightOfTree() - 1)
                 {
-                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(v3.x + 8));
+                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(circle.transform.position.x + 8));
                 }
                 else
                 {
-                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(v3.x + 2));
+                    cir.transform.position = cir.transform.position + Vector3.right * ((float)(circle.transform.position.x + 2));
                 }
-                pos = cir.transform.position;
+                pos = cir.transform.position; GameObject lineObject = new GameObject("Line");
+                LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+                lineRenderer.positionCount = 2;
+                lineRenderer.startWidth = 0.05f;
+                lineRenderer.endWidth = 0.05f;
+                lineRenderer.material.color = Color.black;
+                lineRenderer.SetPosition(0, cir.transform.position);
+                lineRenderer.SetPosition(1, circle.transform.position);
+                lines.Add(lineRenderer);
             }
         }
 
         if(node.Left != null)
         {
             //Debug.Log("Left");
-            geneRateUITree(node.Left, false, pos);
+            geneRateUITree(node.Left, false, cir);
         }
 
         if(node.Right != null)
         {
             //Debug.Log("Right");
-            geneRateUITree(node.Right, true, pos);
+            geneRateUITree(node.Right, true, cir);
         }
     }
 
@@ -132,6 +130,11 @@ public class Logic : MonoBehaviour
             Destroy(circ.gameObject);
         }
         circlesUI.Clear();
+        foreach (LineRenderer line in lines)
+        {
+            Destroy(line.gameObject);
+        }
+        lines.Clear();
     }
 
     public void AddNodeButtonHandler()
@@ -139,7 +142,7 @@ public class Logic : MonoBehaviour
         int number = int.Parse(addNodeField.text);
         avltree.addNode(number);
         destroyCircles();
-        geneRateUITree(avltree.rootNode, false, new Vector3());
+        geneRateUITree(avltree.rootNode, false, new Circle());
         
 
     }
@@ -149,7 +152,7 @@ public class Logic : MonoBehaviour
         int number = int.Parse(deleteNodeField.text);
         avltree.removeNode(number);
         destroyCircles();
-        geneRateUITree(avltree.rootNode, false, new Vector3());
+        geneRateUITree(avltree.rootNode, false, new Circle());
         //Debug.Log(avltree.rootNode.Key);
         foreach (Circle c in circlesUI)
         {
